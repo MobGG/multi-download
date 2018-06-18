@@ -12,7 +12,7 @@ function fallback(urls) {
 		// the download init has to be sequential otherwise IE only use the first
 		var interval = setInterval(function () {
 			if (frame.contentWindow.document.readyState === 'complete'
-			|| frame.contentWindow.document.readyState === 'interactive') {
+				|| frame.contentWindow.document.readyState === 'interactive') {
 				clearInterval(interval);
 
 				// Safari needs a timeout
@@ -41,11 +41,21 @@ function sameDomain(url) {
 }
 
 function download(url) {
+	// create a new mouse event
+	let evt = document.createEvent("MouseEvents");
+	// initialize all the parameters of the event
+	evt.initMouseEvent("click", true, true, window,
+		0, 0, 0, 0, 0,
+		false, true, false, false,  // ctrl, alt, shift, meta
+		0, null);
+
 	var a = document.createElement('a');
-	a.download = '';
-	a.href = url;
-	// firefox doesn't support `a.click()`...
-	a.dispatchEvent(new MouseEvent('click'));
+	a.setAttribute('download', '');
+	a.setAttribute('href', url);
+	a.setAttribute('target', '_blank');
+	a.style.display = 'none';
+	// firefox doesn't support `a.click()`
+	a.dispatchEvent(evt);
 }
 
 module.exports = function (urls) {
